@@ -1,45 +1,87 @@
 import java.util.Scanner;
+
 class User {
     String username;
     String role; 
+
     User(String username, String role) {
         this.username = username;
         this.role = role;
     }
 }
+
 class Job {
     String title;
     String description;
     String postedBy; 
+
     Job(String title, String description, String postedBy) {
         this.title = title;
         this.description = description;
         this.postedBy = postedBy;
     }
 }
+
 class Application {
     String jobTitle;
     String applicantName;
+
     Application(String jobTitle, String applicantName) {
         this.jobTitle = jobTitle;
         this.applicantName = applicantName;
-     }
-  }
-   static void registerUser(Scanner sc) {
+    }
+}
+
+public class JobPortal {
+    static User[] users = new User[50];
+    static Job[] jobs = new Job[50];
+    static Application[] applications = new Application[100];
+    static int userCount = 0, jobCount = 0, appCount = 0;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("<--- Job Portal Application --->");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter choice: ");
+            int choice = Integer.parseInt(sc.nextLine());
+
+            if (choice == 1){
+                registerUser(sc);
+            } else if (choice == 2) {
+                loginUser(sc);
+            } else if (choice == 3) {
+                System.out.println("Thank you for using our Job Portal.");
+                break;
+            } else {
+                System.out.println("Please try again...");
+            }
+        }
+        sc.close();
+    }
+
+    static void registerUser(Scanner sc) {
         System.out.print("Enter username: ");
         String username = sc.nextLine();
         System.out.print("Enter role (EMPLOYER/APPLICANT): ");
         String role = sc.nextLine().toUpperCase();
+
         if (!role.equals("EMPLOYER") && !role.equals("APPLICANT")) {
             System.out.println("Invalid role. Registration failed.");
             return;
         }
+
         users[userCount++] = new User(username, role);
         System.out.println("User registered successfully!");
     }
+
     static void loginUser(Scanner sc) {
         System.out.print("Enter username: ");
         String username = sc.nextLine();
+
         User loggedIn = null;
         for (int i = 0; i < userCount; i++) {
             if (users[i].username.equals(username)) {
@@ -47,6 +89,7 @@ class Application {
                 break;
             }
         }
+
         if (loggedIn == null) {
             System.out.println("User not found.");
             return;
@@ -58,6 +101,7 @@ class Application {
             applicantMenu(sc, loggedIn);
         }
     }
+
     static void employerMenu(Scanner sc, User employer) {
         while (true) {
             System.out.println("=== Employer Menu ===");
@@ -66,6 +110,7 @@ class Application {
             System.out.println("3. Logout");
             System.out.print("Enter choice: ");
             int choice = Integer.parseInt(sc.nextLine());
+
             if (choice == 1) {
                 postJob(sc, employer);
             } else if (choice == 2) {
@@ -78,6 +123,7 @@ class Application {
             }
         }
     }
+
     static void applicantMenu(Scanner sc, User applicant) {
         while (true) {
             System.out.println("=== Applicant Menu ===");
@@ -87,6 +133,7 @@ class Application {
             System.out.println("4. Logout");
             System.out.print("Enter choice: ");
             int choice = Integer.parseInt(sc.nextLine());
+
             if (choice == 1) {
                 viewAllJobs();
             } else if (choice == 2) {
@@ -101,6 +148,7 @@ class Application {
             }
         }
     }
+
     static void postJob(Scanner sc, User employer) {
         System.out.print("Enter job title: ");
         String title = sc.nextLine();
@@ -109,6 +157,7 @@ class Application {
         jobs[jobCount++] = new Job(title, desc, employer.username);
         System.out.println("Job posted successfully.");
     }
+
     static void viewJobs(User employer) {
         System.out.println("=== Your Jobs ===");
         boolean found = false;
@@ -124,22 +173,25 @@ class Application {
             System.out.println("No jobs posted yet.");
         }
     }
+
     static void viewAllJobs() {
-       System.out.println("=== Available Jobs ===");
-       if (jobCount == 0) {
-         System.out.println("No jobs available.");
-         return;
+        System.out.println("=== Available Jobs ===");
+        if (jobCount == 0) {
+            System.out.println("No jobs available.");
+            return;  // ✅ fixed: removed "return 1;"
         }
         for (int i = 0; i < jobCount; i++) {
             System.out.println("Title: " + jobs[i].title);
             System.out.println("Description: " + jobs[i].description);
             System.out.println("Posted by: " + jobs[i].postedBy);
-            System.out.println("---");
+            System.out.println("----------------------");
         }
     }
+
     static void applyJob(Scanner sc, User applicant) {
         System.out.print("Enter job title to apply: ");
         String jobTitle = sc.nextLine();
+
         for (int i = 0; i < jobCount; i++) {
             if (jobs[i].title.equals(jobTitle)) {
                 applications[appCount++] = new Application(jobTitle, applicant.username);
@@ -149,6 +201,7 @@ class Application {
         }
         System.out.println("Job not found.");
     }
+
     static void viewApplications(User applicant) {
         System.out.println("=== My Applications ===");
         boolean found = false;
@@ -161,32 +214,5 @@ class Application {
         if (!found) {
             System.out.println("No applications found.");
         }
-    }
-    public class JobPortal {
-    static User[] users = new User[50];
-    static Job[] jobs = new Job[50];
-    static Application[] applications = new Application[100];
-    static int userCount = 0, jobCount = 0, appCount = 0;
-    public static void main(String[] args) {
-     Scanner sc = new Scanner(System.in);
-        while (true) {
-            System.out.println("<--- Job Portal Application --->");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("3. Exit");
-            System.out.print("Enter choice: ");
-            int choice = Integer.parseInt(sc.nextLine());
-            if (choice == 1){
-                registerUser(sc);
-            } else if (choice == 2) {
-                loginUser(sc);
-            } else if (choice == 3) {
-                System.out.println("Thank you for using our Job Portal.");
-                break;
-            } else {
-                System.out.println("Please try again...");
-            }
-        }
-        sc.close();
     }
 }
